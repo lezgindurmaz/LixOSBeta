@@ -1,0 +1,46 @@
+================================================================
+  LixOS SETUP.C  -  Turbo C 2.0 / 3.0  Derleme Talimatları
+================================================================
+
+GEREKSINIMLER
+  - Turbo C 2.0 veya 3.0 (BORLAND)
+  - MS-DOS 6.22
+  - TCC.EXE PATH'te tanımlı olmalı
+
+DIZIN YAPISI
+  A:\LIXOS\
+    ├── LIXUI.H       <- Bu dosya olmadan derlenmez!
+    ├── SETUP.C
+    ├── NOTEPAD.C     (henuz yok, siradaki)
+    └── LIXVER.C      (henuz yok, siradaki)
+
+DERLEME (Komut Satirindan)
+  TCC SETUP.C
+
+  Veya daha fazla optimizasyon ile:
+  TCC -O -G -Z SETUP.C
+
+DERLEYICI BAYRAKLARI
+  -O   Kod optimizasyonu
+  -G   Hiz icin optimize et
+  -Z   Register kullanimi optimize et
+  -ml  Large memory model (buyuk programlar icin onerilir)
+
+LARGE MODEL ile derleme (tavsiye):
+  TCC -ml SETUP.C
+
+TURBO C IDE ile:
+  1. TC.EXE ac
+  2. File -> Open -> SETUP.C
+  3. Options -> Compiler -> Code Generation -> Model: Large
+  4. Compile -> Make  (F9)
+  5. Cikti: SETUP.EXE
+
+ONEMLI NOTLAR
+  - LIXUI.H, SETUP.C ile ayni klasorde olmali
+  - 'reboot' etiketi icin pragma gerekebilir, derleyici uyarisi
+    normaldir, hata degil
+  - system("FDISK") ve system("FORMAT") cagrilari
+    MS-DOS PATH'inde bu komutlarin olmasi gerektirir
+  - FORMAT komutu icin A: disketi surucude olmali
+================================================================
