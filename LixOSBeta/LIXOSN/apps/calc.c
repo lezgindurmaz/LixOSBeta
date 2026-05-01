@@ -41,17 +41,17 @@ static void calc_do_op(char op) {
 
 void calc_open(void) {
     if (calc_win_id >= 0 && windows[calc_win_id].visible) return;
-    calc_win_id = wm_open(100, 50, 100, 120, "Calculator");
+    calc_win_id = wm_open(100, 50, 100, 120, "Calculator", calc_update);
     strcpy(calc_display, "0");
     calc_value = 0;
     calc_op = ' ';
     calc_new_number = 1;
 }
 
-int calc_update(void) {
+void calc_update(int id) {
     Window *w;
-    if (calc_win_id < 0 || !windows[calc_win_id].visible) return 0;
-    w = &windows[calc_win_id];
+    if (id < 0 || !windows[id].visible) return;
+    w = &windows[id];
 
     /* Draw display */
     vga_fillrect(w->x + 5, w->y + TITLE_H + 5, w->w - 10, 15, COL_WHITE);
@@ -80,8 +80,6 @@ int calc_update(void) {
     if (wm_close_clicked(calc_win_id)) {
         wm_close(calc_win_id);
         calc_win_id = -1;
-        return 0;
     }
 
-    return 1;
 }

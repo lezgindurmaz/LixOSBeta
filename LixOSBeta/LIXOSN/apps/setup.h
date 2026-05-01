@@ -2,6 +2,6 @@
 #define SETUP_H
 
 void setup_open(void);
-int  setup_update(void);
+void setup_update(int id);
 
 #endif

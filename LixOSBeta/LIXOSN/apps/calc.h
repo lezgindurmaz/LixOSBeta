@@ -2,6 +2,6 @@
 #define CALC_H
 
 void calc_open(void);
-int  calc_update(void);
+void calc_update(int id);
 
 #endif

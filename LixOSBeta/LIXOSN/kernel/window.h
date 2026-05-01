@@ -16,6 +16,7 @@ typedef struct {
     int  focused;
     int  dragging;
     int  drag_ox, drag_oy;  /* offset when drag started */
+    void (*update_cb)(int id); /* Callback for app logic and drawing */
 } Window;
 
 /* Shared window array */
@@ -24,7 +25,7 @@ extern int    wm_focused;   /* index of focused window */
 
 /* Window manager */
 void wm_init(void);
-int  wm_open(int x, int y, int w, int h, const char *title);
+int  wm_open(int x, int y, int w, int h, const char *title, void (*update_cb)(int id));
 void wm_close(int id);
 void wm_draw_all(void);          /* draws all windows (no content) */
 void wm_draw_frame(int id);      /* draws one frame */

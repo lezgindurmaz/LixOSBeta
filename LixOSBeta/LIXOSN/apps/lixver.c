@@ -15,14 +15,14 @@ static int ver_win_id = -1;
 
 void lixver_open(void) {
     if(ver_win_id >= 0 && windows[ver_win_id].visible) return;
-    ver_win_id = wm_open(70, 40, VER_W, VER_H, "About LixOS");
+    ver_win_id = wm_open(70, 40, VER_W, VER_H, "About LixOS", lixver_update);
 }
 
-int lixver_update(void) {
+void lixver_update(int id) {
     Window *w;
     int cx, cy;
 
-    if(ver_win_id < 0 || !windows[ver_win_id].visible) return 0;
+    if(id < 0 || !windows[id].visible) return;
     w  = &windows[ver_win_id];
     cx = w->x + 4;
     cy = w->y + 2 + TITLE_H + 4;
@@ -58,7 +58,5 @@ int lixver_update(void) {
                    cx + VER_W/2 - 20, cy + VER_H - 32, 40, 12))) {
         wm_close(ver_win_id);
         ver_win_id = -1;
-        return 0;
     }
-    return 1;
 }

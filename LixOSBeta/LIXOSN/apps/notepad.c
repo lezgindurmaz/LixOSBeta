@@ -178,19 +178,20 @@ static void np_draw_menu(int win_x, int win_y, int win_w) {
 }
 
 /* ---- Public API ---- */
+void notepad_update(int id);
+
 void notepad_open(void) {
     if(np_win_id >= 0 && windows[np_win_id].visible) return;
-    np_win_id = wm_open(20, 10, NP_COLS*8+8, NP_ROWS*9+40, "Notepad - LixOS");
+    np_win_id = wm_open(20, 10, NP_COLS*8+8, NP_ROWS*9+40, "Notepad - LixOS", notepad_update);
     np_clear_all();
 }
 
-/* Returns 1 while open, 0 if closed */
-int notepad_update(void) {
+void notepad_update(int id) {
     Window *w;
     int key = 0;
 
-    if(np_win_id < 0 || !windows[np_win_id].visible) return 0;
-    w = &windows[np_win_id];
+    if(id < 0 || !windows[id].visible) return;
+    w = &windows[id];
 
     /* Content origin */
     np_cx = w->x + 4;
@@ -214,7 +215,7 @@ int notepad_update(void) {
             else if(gui_inside(mouse.x, mouse.y, w->x+6, my+32, 52, 9))
                 { np_save(np_filename); np_menu_open=0; }
             else if(gui_inside(mouse.x, mouse.y, w->x+6, my+42, 52, 9))
-                { wm_close(np_win_id); np_win_id=-1; return 0; }
+                { wm_close(np_win_id); np_win_id=-1; return; }
             else np_menu_open=0;
         }
         /* Click inside text area to move cursor */
@@ -269,7 +270,7 @@ int notepad_update(void) {
                 case 13:  np_newline(); break;          /* Enter */
                 case 8:   np_delete_char(); break;      /* Backspace */
                 case 27:  /* Escape -> close */
-                    wm_close(np_win_id); np_win_id=-1; return 0;
+                    wm_close(np_win_id); np_win_id=-1; return;
                 default:
                     if(key >= 32 && key <= 126)
                         np_insert_char((char)key);
@@ -282,5 +283,4 @@ int notepad_update(void) {
             np_scroll = np_cur_line - NP_ROWS + 1;
     }
 
-    return 1;
 }

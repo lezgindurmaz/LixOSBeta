@@ -2,6 +2,6 @@
 #define FMAN_H
 
 void fman_open(void);
-int  fman_update(void);
+void fman_update(int id);
 
 #endif

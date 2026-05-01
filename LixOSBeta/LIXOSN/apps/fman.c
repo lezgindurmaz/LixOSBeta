@@ -12,7 +12,7 @@ static int file_count = 0;
 
 void fman_open(void) {
     if (fman_win_id >= 0 && windows[fman_win_id].visible) return;
-    fman_win_id = wm_open(50, 40, 150, 130, "File Manager");
+    fman_win_id = wm_open(50, 40, 150, 130, "File Manager", fman_update);
 
     struct ffblk ffblk;
     int done = findfirst("*.*", &ffblk, 0);
@@ -23,10 +23,10 @@ void fman_open(void) {
     }
 }
 
-int fman_update(void) {
+void fman_update(int id) {
     Window *w;
-    if (fman_win_id < 0 || !windows[fman_win_id].visible) return 0;
-    w = &windows[fman_win_id];
+    if (id < 0 || !windows[id].visible) return;
+    w = &windows[id];
 
     for (int i = 0; i < file_count; i++) {
         vga_putstr(w->x + 10, w->y + TITLE_H + 5 + i * 9, files[i], COL_BLACK, COL_WIN_GRAY);
@@ -35,8 +35,6 @@ int fman_update(void) {
     if (wm_close_clicked(fman_win_id)) {
         wm_close(fman_win_id);
         fman_win_id = -1;
-        return 0;
     }
 
-    return 1;
 }

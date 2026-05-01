@@ -133,7 +133,14 @@ int main(void) {
     while(running) {
         /* ---- Input ---- */
         mouse_update();
-        wm_process_mouse();
+
+        /* Start menu has highest priority if open */
+        if (start_menu_open) {
+            handle_start_menu();
+        } else {
+            /* If no start menu, handle windows then desktop */
+            wm_process_mouse();
+        }
 
         /* ---- Handle Start button ---- */
         if(mouse.left_click &&
@@ -183,17 +190,11 @@ int main(void) {
         /* Window frames first, then content */
         wm_draw_all();
 
-        /* Draw and update apps (they draw into vga_buffer) */
-        notepad_update();
-        lixver_update();
-        setup_update();
-        calc_update();
-        fman_update();
+        /* Content is drawn via wm_draw_all callbacks */
 
         /* Start menu on top of everything */
         if(start_menu_open) {
             draw_start_menu();
-            handle_start_menu();
         }
 
         /* Taskbar */

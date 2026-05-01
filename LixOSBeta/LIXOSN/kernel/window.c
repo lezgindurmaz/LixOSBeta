@@ -20,7 +20,7 @@ void wm_init(void) {
     wm_focused = -1;
 }
 
-int wm_open(int x, int y, int w, int h, const char *title) {
+int wm_open(int x, int y, int w, int h, const char *title, void (*update_cb)(int id)) {
     int i;
     for(i=0; i<MAX_WINDOWS; i++) {
         if(!windows[i].visible) {
@@ -31,6 +31,7 @@ int wm_open(int x, int y, int w, int h, const char *title) {
             windows[i].visible = 1;
             windows[i].focused = 1;
             windows[i].dragging= 0;
+            windows[i].update_cb = update_cb;
             strncpy(windows[i].title, title, 31);
             windows[i].title[31]='\0';
             if(wm_focused >= 0)
@@ -106,9 +107,15 @@ void wm_draw_frame(int id) {
 
 void wm_draw_all(void) {
     int i;
-    for(i=0; i<MAX_WINDOWS; i++)
-        if(windows[i].visible)
+    for(i=0; i<MAX_WINDOWS; i++) {
+        if(windows[i].visible) {
             wm_draw_frame(i);
+            /* Standardize app drawing order: frame, then content */
+            if (windows[i].update_cb) {
+                windows[i].update_cb(i);
+            }
+        }
+    }
 }
 
 /* ---- Returns 1 if the close [x] button was mouse-clicked ---- */
