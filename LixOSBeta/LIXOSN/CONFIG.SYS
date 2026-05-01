@@ -1,0 +1,19 @@
+REM ============================================================
+REM  CONFIG.SYS  -  LixOS / MS-DOS 6.22 configuration
+REM ============================================================
+
+REM -- Memory management --
+DEVICE=C:\DOS\HIMEM.SYS
+DEVICE=C:\DOS\EMM386.EXE NOEMS
+
+REM -- Load DOS into high memory --
+DOS=HIGH,UMB
+
+REM -- File and buffer settings --
+FILES=30
+BUFFERS=20
+STACKS=9,256
+
+REM -- DPMI host for DJGPP 32-bit programs --
+REM CWSDPMI.EXE ships with DJGPP; copy it to C:\LIXOS\
+REM No DEVICE line needed; CWSDPMI auto-loads when LIXOS.EXE runs.
