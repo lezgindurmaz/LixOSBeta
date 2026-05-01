@@ -1,8 +1,14 @@
 # LixOS Bugfixes and Improvements
 
 ## Fixed Issues
-- **Screen Inversion:** Fixed `vga_flip` in `kernel/vga.c` to blit the buffer in correct top-to-bottom order.
-- **Mouse Inversion:** Corrected `mouse_update` in `kernel/mouse.c` to use standard, non-inverted coordinates.
+- **Screen & Text Inversion:**
+    - Fixed `vga_flip` in `kernel/vga.c` to blit the buffer in correct top-to-bottom order.
+    - Fixed `vga_putchar` to use LSB-first bit order, resolving mirrored/inverted text.
+- **Text Quality:** Replaced the minimal font with a higher-quality, more readable 8x8 font.
+- **Application Launching:**
+    - Improved double-click detection logic in `main.c`.
+    - Corrected drawing order: windows are now drawn *before* application content to prevent overwriting.
+- **Mouse Interaction:** Fixed `mouse_update` coordinates and ensured `wm_process_mouse` doesn't block other handlers.
 - **UI Quality:**
     - Improved window borders with a 3D effect (Windows 3.x style).
     - Refined the color palette for a more professional appearance.

@@ -143,31 +143,36 @@ int main(void) {
 
         /* ---- Handle icon double-click (simulate: rapid click) ---- */
         {
-            static int last_click_icon = -1;
-            static int click_count     = 0;
-            static int click_timer     = 0;
+            static int last_selected = -1;
+            static int click_timer   = 0;
             int i;
-            click_timer++;
-            if(click_timer > 30) { click_count=0; last_click_icon=-1; }
+
+            if(click_timer > 0) click_timer--;
+
             if(mouse.left_click) {
+                int found = 0;
                 for(i=0; i<(int)N_ICONS; i++) {
                     if(gui_inside(mouse.x, mouse.y,
                                   icons[i].x, icons[i].y,
                                   ICON_W, ICON_H+10)) {
-                        selected_icon = i;
-                        if(last_click_icon == i) {
-                            click_count++;
-                            if(click_count >= 2) {
-                                icons[i].open();
-                                click_count=0; last_click_icon=-1;
-                            }
+                        found = 1;
+                        if(last_selected == i && click_timer > 0) {
+                            /* Double click! */
+                            icons[i].open();
+                            click_timer = 0;
+                            last_selected = -1;
                         } else {
-                            last_click_icon = i;
-                            click_count = 1;
+                            /* Single click */
+                            selected_icon = i;
+                            last_selected = i;
+                            click_timer = 40; /* Increased timer for better reliability */
                         }
-                        click_timer = 0;
                         break;
                     }
+                }
+                if (!found) {
+                    selected_icon = -1;
+                    last_selected = -1;
                 }
             }
         }
@@ -175,15 +180,15 @@ int main(void) {
         /* ---- Draw ---- */
         draw_desktop();
 
+        /* Window frames first, then content */
+        wm_draw_all();
+
         /* Draw and update apps (they draw into vga_buffer) */
         notepad_update();
         lixver_update();
         setup_update();
         calc_update();
         fman_update();
-
-        /* Window frames on top */
-        wm_draw_all();
 
         /* Start menu on top of everything */
         if(start_menu_open) {

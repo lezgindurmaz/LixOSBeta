@@ -123,11 +123,14 @@ int wm_close_clicked(int id) {
 /* ---- Handle dragging and focus switching ---- */
 void wm_process_mouse(void) {
     int i;
+
+    /* If start menu is open, let it handle mouse first */
+    /* This logic is in main.c, but we should be careful here */
+
     /* Release drag */
     if(!mouse.left) {
         for(i=0; i<MAX_WINDOWS; i++)
             windows[i].dragging = 0;
-        return;
     }
     /* Move if already dragging */
     for(i=0; i<MAX_WINDOWS; i++) {
