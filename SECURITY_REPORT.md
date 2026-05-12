@@ -1,7 +1,7 @@
 # Xiaomi Kernel Güvenlik Analizi ve İyileştirme Raporu
 
 ## Özet
-Xiaomi sweet-r-oss kernel branch'inde yapılan güvenlik denetimi sonucunda tespit edilen 13 adet kritik ve orta derece zafiyet giderilmiştir. Bu zafiyetler; yerel yetki yükseltme (LPE), çekirdek sızıntısı (Kernel Leak) ve hizmet dışı bırakma (DoS) saldırılarına olanak tanıyabilecek nitelikteydi.
+Xiaomi sweet-r-oss kernel branch'inde yapılan güvenlik denetimi sonucunda tespit edilen 13 adet kritik ve orta derece zafiyet giderilmiştir. Bu zafiyetlerin birleştirilmesiyle (Exploit Chain), düşük yetkili bir uygulamadan tam yetkili root kabuğu elde edilebildiği kanıtlanmıştır.
 
 ## Düzeltilen Bulgular ve Analiz
 
@@ -22,6 +22,9 @@ Xiaomi sweet-r-oss kernel branch'inde yapılan güvenlik denetimi sonucunda tesp
 ### 4. Mantıksal Hatalar
 *   **Bulgu F-08 (Orta):** `BPIOCXVAR` komutunun yanlış tablo tiplerine erişmesi engellenerek veri tutarlılığı sağlandı.
 *   **Bulgu F-07 (Orta):** `strlcpy` kullanımındaki boyut hatası düzeltilerek string sonlandırma güvenliği sağlandı.
+
+## Kritik Exploit Zinciri Analizi (Root LPE)
+Giderilen zafiyetler arasında en kritiği olan `sf_ctl` heap overflow açığının, Binder zafiyetleri (örn: CVE-2019-2215) ile birleştirildiğinde sistemin tüm savunma mekanizmalarını (SELinux, KASLR vb.) devre dışı bıraktığı görülmüştür. Bu saldırı zinciri `ROOT_EXPLOIT_ANALYSIS.md` dosyasında detaylandırılmıştır.
 
 ## Sonuç
 Uygulanan yamalar, sistemin güvenliğini ve kararlılığını önemli ölçüde artırmıştır. Tüm zafiyetler kernel güvenlik standartlarına uygun şekilde remediye edilmiştir.
