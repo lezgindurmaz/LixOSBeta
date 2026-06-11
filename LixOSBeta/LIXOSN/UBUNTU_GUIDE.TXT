@@ -1,0 +1,153 @@
+================================================================
+  LixOS - Ubuntu ARM64'te Derleme ve Test Rehberi
+================================================================
+
+OZET
+----
+ARM64 Ubuntu'da DJGPP cross-compiler + Box64 kullanarak
+LixOS'u derleyip DOSBox ile test edeceksiniz.
+
+  DJGPP binary'leri x86_64 icin derlenmiştir.
+  ARM64'te Box64 bu binary'leri seffaf olarak emule eder.
+  Yani: box64 i586-pc-msdosdjgpp-gcc ... seklinde calisir.
+  Makefile bunu otomatik yapar (BOX64 = box64).
+
+
+ADIM 0: ZIP'i ac
+-----------------
+
+  unzip LIXOS.zip
+  cd LIXOS
+
+
+ADIM 1: DJGPP + Box64 Kurulumu
+--------------------------------
+
+  chmod +x setup_djgpp.sh
+  ./setup_djgpp.sh
+  source ~/.bashrc
+
+  Bu script ARM64 tespit edince:
+  - Box64'u kurar (apt veya PPA)
+  - DOSBox'i kurar
+  - DJGPP 12.2.0 linux64 binary'sini indirir (~80MB)
+  - /usr/local/djgpp/ altina kurar
+  - PATH'e ekler
+
+  Kurulum sonrasi test:
+    box64 /usr/local/djgpp/bin/i586-pc-msdosdjgpp-gcc --version
+    => i586-pc-msdosdjgpp-gcc (GCC) 12.2.0
+
+
+ADIM 2: CWSDPMI.EXE Indir
+---------------------------
+
+  make cwsdpmi
+
+  LIXOS.EXE 32-bit DPMI modunda calisir.
+  DOSBox'in kendi DPMI'si var ama gercek DOS'ta
+  CWSDPMI.EXE ayni klasorde olmali.
+
+
+ADIM 3: Derleme
+----------------
+
+  make
+
+  Arka planda su komutu calistirir:
+    box64 i586-pc-msdosdjgpp-gcc -O2 -Wall -DDOS ... -o LIXOS.EXE
+
+  Cikti: LIXOS.EXE
+
+
+ADIM 4: DOSBox ile Test
+------------------------
+
+  make run
+
+  DOSBox acilir, LixOS baslar.
+  Mouse: DOSBox penceresine tiklayinca yakalanir.
+         CTRL+F10 ile mouse'u serbest birakirsiniz.
+  Cikis: ESC tusu (DOS'a doner, DOSBox kapanir)
+
+
+ADIM 5: Gercek DOS'a Kopyalama
+--------------------------------
+
+  make dist
+  # dist/ klasorunu DOS makinesine kopyalayin
+
+  DOS makinasinda:
+    MOUSE.COM          (mouse surucu su)
+    LIXOS.EXE
+    CWSDPMI.EXE        (ayni klasorde)
+
+
+DOSYA YAPISI
+------------
+
+  LIXOS/
+  +-- Makefile           Linux build sistemi (BOX64=box64)
+  +-- dosbox.conf        DOSBox ayarlari
+  +-- setup_djgpp.sh     DJGPP + Box64 kurulum scripti
+  +-- UBUNTU_GUIDE.TXT   Bu dosya
+  +-- BUILD.BAT          DOS'ta derleme (yedek)
+  +-- AUTOEXEC.BAT
+  +-- CONFIG.SYS
+  +-- README.TXT
+  +-- main.c
+  +-- kernel/
+  |   +-- vga.h / vga.c
+  |   +-- mouse.h / mouse.c
+  |   +-- window.h / window.c
+  +-- apps/
+      +-- notepad.h / notepad.c
+      +-- lixver.h  / lixver.c
+      +-- setup.h   / setup.c
+
+
+SORUN GIDERME
+-------------
+
+"box64: command not found"
+  -> ./setup_djgpp.sh scripti Box64'u kurmaya calisir
+  -> Manuel kurulum: https://github.com/ptitSeb/box64
+  -> Ubuntu ARM icin: sudo apt install box64-generic-arm
+
+"i586-pc-msdosdjgpp-gcc: command not found"
+  -> source ~/.bashrc
+  -> Veya yeni terminal ac
+
+"CWSDPMI.EXE not found" (DOSBox'ta)
+  -> make cwsdpmi
+  -> DOSBox kendi DPMI'sini kullandigi icin genelde sorun olmaz
+
+"mouse doesn't work in DOSBox"
+  -> DOSBox penceresine sol tikla (mouse yakalar)
+  -> CTRL+F10 ile serbest birakilir
+
+DOSBox cok yavas / hizli:
+  -> dosbox.conf icinde cycles=max yerine cycles=10000 dene
+
+"undefined reference to ..."
+  -> make clean && make
+
+Gercek DOS'ta "DPMI not available":
+  -> CWSDPMI.EXE LIXOS.EXE ile ayni klasorde olmali
+  -> CONFIG.SYS'de HIMEM.SYS yuklu olmali
+
+
+TEKNIK NOTLAR
+-------------
+
+  Neden linux64 binary ARM64'te calisir?
+  -> Box64, x86_64 Linux ELF binary'lerini ARM64 uzerinde calistirir.
+  -> DJGPP'nin gcc/ld/as araclari x86_64 ELF binary'leri.
+  -> Urettikleri cikti (LIXOS.EXE) DOS COFF formati, ARM64'e ozel degil.
+  -> Ozet: ARM64 -> Box64 -> x86_64 DJGPP -> DOS .EXE
+
+  Neden DOSBox'ta calisir?
+  -> DOSBox x86 DOS emulatorudur, ARM64 Ubuntu'da da calisir.
+  -> LIXOS.EXE i386 DOS kodu, DOSBox emule eder.
+
+================================================================
